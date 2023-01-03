@@ -1,6 +1,6 @@
 #!flask/bin/python
 import json
-from flask import Flask, Response, render_template
+from flask import Flask, Response, render_template, request
 import optparse
 import boto3
 from boto3.dynamodb.conditions import Key
@@ -44,6 +44,12 @@ def add_order_to_to_dynamodb(ProdName):
 @application.route('/')
 @application.route('/home')
 def home_page():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        message = request.form['message']
+        # Do something with the username and password
+        add_order_to_to_dynamodb(name)
     return render_template('home.html')
 
 @application.route('/market')
