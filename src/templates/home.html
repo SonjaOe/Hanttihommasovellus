@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}
+    Home Page
+{% endblock %}
+
+{% block content %}
+    <h1>Welcome to Our Shop</h1>
+    <a href="/market"><button class="btn btn-outline btn-success">Click here to the market!</button></a>
+    <form action="{{ url_for('home_page') }}" method="post">
+        Project file path: <input type="text" name="projectFilePath"><br>
+        <input type="submit" value="Submit">
+    </form>
+{% endblock %}
