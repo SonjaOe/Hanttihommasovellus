@@ -11,33 +11,33 @@ application = Flask(__name__)
 
 def get_products_from_dynamodb():
     dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
-    table = dynamodb.Table('W10Group1Product')
+    table = dynamodb.Table('Hanttihommapalvelut')
     data = table.scan()
     items = data['Items']
     return items
 
-def subtract_products_from_dynamodb(ProdCat,ProdName):
+def subtract_products_from_dynamodb(Palvelu,Kaupunki):
     dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
-    table = dynamodb.Table('W10Group1Product')
-    product_info = table.query(KeyConditionExpression=Key('ProdCat').eq(ProdCat) & Key('ProdName').eq(ProdName))
+    table = dynamodb.Table('Hanttihommapalvelut')
+    product_info = table.query(KeyConditionExpression=Key('Palvelu').eq(Palvelu) & Key('Kaupunki').eq(Kaupunki))
     data = product_info['Items']
     newstock = int(data[0]['ProdStock'])-1
     table.update_item(
-        Key={'ProdCat': ProdCat,'ProdName': ProdName},
+        Key={'Palvelu': Palvelu,'Kaupunki': Kaupunki},
         UpdateExpression="SET ProdStock= :s",
         ExpressionAttributeValues={':s':newstock},
     )
     return str(newstock)
 
-def add_order_to_to_dynamodb(ProdName):
+def add_order_to_to_dynamodb(Kaupunki):
     id = str(uuid.uuid4())
     OrderNumber = str('ORD#' + id)
     dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
-    table = dynamodb.Table('W10Group1UsersOrders')
+    table = dynamodb.Table('Tilaukset')
     table.update_item(
         Key={'PrimaryAccountID': 'ACC#007','SortKey': OrderNumber},
-        UpdateExpression="SET ProdName= :s",
-        ExpressionAttributeValues={':s':ProdName},
+        UpdateExpression="SET Kaupunki= :s",
+        ExpressionAttributeValues={':s':Kaupunki},
     )
     return OrderNumber
 
@@ -51,11 +51,11 @@ def market_page():
     items = get_products_from_dynamodb()
     return render_template('market.html', items=items)
 
-@application.route('/market/purchase/<ProdCat>/<ProdName>')
-def purchase_page(ProdCat,ProdName):
-    data = subtract_products_from_dynamodb(ProdCat,ProdName)
-    OrderNumber = add_order_to_to_dynamodb(ProdName)
-    return render_template('purchase.html', data=data, ProdName = ProdName, OrderNumber = OrderNumber)
+@application.route('/market/purchase/<Palvelu>/<Kaupunki>')
+def purchase_page(Palvelu,Kaupunki):
+    data = subtract_products_from_dynamodb(Palvelu,Kaupunki)
+    OrderNumber = add_order_to_to_dynamodb(Kaupunki)
+    return render_template('purchase.html', data=data, Kaupunki = Kaupunki, OrderNumber = OrderNumber)
 
 
 if __name__ == '__main__':

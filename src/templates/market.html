@@ -8,23 +8,23 @@
         <thead>
             <tr>
                 <!-- Your Columns HERE -->
-                <th scope="col">ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">Price</th>
+                <th scope="col">Palvelu</th>
+                <th scope="col">Kaupunki</th>
+                <!-- <th scope="col">Price</th>
                 <th scope="col">Stock</th>
-                <th scope="col">Buy</th>
+                <th scope="col">Buy</th> -->
             </tr>
         </thead>
         <tbody>
             
             {% for item in items %}
                 <tr>
-                    <td>{{ item['ProdID'] }}</td>
-                    <td>{{ item['ProdName'] }}</td>
-                    <td>{{ item['ProdPrice'] }} €</td>
-                    <td>{{ item['ProdStock'] }}</td>
+                    <td>{{ item['Palvelu'] }}</td>
+                    <td>{{ item['Kaupunki'] }}</td>
+                    <!-- <td>{{ item['ProdPrice'] }} €</td>
+                    <td>{{ item['ProdStock'] }}</td> -->
                     <td>                       
-                        <a href="/market/purchase/{{ item['ProdCat'] }}/{{ item['ProdName'] }}"><button class="btn btn-outline btn-success">Purchase this Item</button></a>
+                        <a href="/market/purchase/{{ item['Palvelu'] }}/{{ item['Kaupunki'] }}"><button class="btn btn-outline btn-success">Purchase this Item</button></a>
                     </td>
                 </tr>
             {% endfor %}
