@@ -8,31 +8,22 @@
         <thead>
             <tr>
                 <!-- Your Columns HERE -->
-                <th scope="col">ID</th>
+                <th scope="col">Area</th>                
                 <th scope="col">Name</th>
-                <th scope="col">Price</th>
-                <th scope="col">Stock</th>
-                <th scope="col">Buy</th>
+                <th scope="col">Reward</th>
+                <th scope="col">Help</th>
             </tr>
         </thead>
         <tbody>
             
             {% for item in items %}
-                {% if item['ProdVis'] %}
+                {% if item['ServiceVisibility'] %}
                     <tr>
-                        <td>{{ item['ProdID'] }}</td>
-                        <td>{{ item['ProdName'] }}</td>
-                        <td>{{ item['ProdPrice'] }} €</td>
-                        <td>{{ item['ProdStock'] }}</td>
-                        <td>
-                            <!-- <form method="post" action="/home">
-                                <input type="text" service="service" value="{{ item['ProdName'] }}" placeholder="Name">                          
-                                <input type="text" name="name" placeholder="Name">
-                                <input type="text" name="email" placeholder="Email">
-                                <input type="text" name="message" placeholder="Message">        
-                                <input type="submit" value="Send message">
-                            </form>                       -->
-                            <a href="/market/purchase/{{ item['ProdCat'] }}/{{ item['ProdName'] }}"><button class="btn btn-outline btn-success">Purchase this Item</button></a>
+                        <td>{{ item['ServiceCity'] }}</td>
+                        <td>{{ item['RequestedJob'] }}</td>
+                        <td>{{ item['ServiceReward'] }}</td>
+                        <td>                   
+                            <a href="/market/details/{{ item['ServiceID'] }}"><button class="btn btn-outline btn-success">Check details and help</button></a>
                         </td>
                     </tr>
                 {% endif %}

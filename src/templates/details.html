@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}
+  Details of {{ data["RequestedJob"] }}, {{ data["ServiceCity"] }}
+{% endblock %}
+
+{% block content %}
+<style>
+    .center {
+        text-align: center;
+    }
+</style>
+<div class="center">
+
+            <h2>
+                {{ data["RequestedJob"] }}, {{ data["ServiceCity"] }}
+            </h2>
+            <br>
+            <h5>
+                REWARD
+            </h5>
+            <p>
+                {{ data["ServiceReward"] }}
+            </p>
+            <br>
+            <h5>
+                DETAILS
+            </h5>
+            <p>
+                {{ data["ServiceOwnerMessage"] }}
+            </p>
+            <br>
+            <h5>
+                ACCEPT JOB
+            </h5>
+        
+            <style>
+                form {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    width: 50%;
+                    margin: 0 auto;
+                }
+                form > * {
+                    margin: 10px auto;
+                }
+                </style>
+
+            <form method="post" action="/market/details/{{ data['ServiceID'] }}">
+                <input type="text" name="name" placeholder="Name" style="height: 30px; width: 200px;">
+                <input type="text" name="email" placeholder="Email" style="height: 30px; width: 200px;">
+                <textarea name="message" rows="3" cols="90" placeholder="Additional information for requester"></textarea>       
+                <input type="submit" value="Accept to provide service" class="btn btn-primary">
+            </form>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+              <ul class=flashes>
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+              </ul>
+            {% endif %}
+            {% endwith %}
+            <br><br><br>
+            <p>
+                <a href="/market"><button class="btn btn-outline btn-success">Back to Market</button></a>
+            </p>
+        </div>
+{% endblock %}
+

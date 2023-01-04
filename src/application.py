@@ -1,67 +1,135 @@
 #!flask/bin/python
 import json
-from flask import Flask, Response, render_template, request
+from flask import Flask, Response, render_template, request, flash
 import optparse
 import boto3
 from boto3.dynamodb.conditions import Key
 import uuid
 
 application = Flask(__name__)
+application.secret_key = 'your_secret_key'
 
 
-def get_products_from_dynamodb():
+
+def get_jobs_from_dynamodb():
     dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
-    table = dynamodb.Table('W10Group1Product')
+    table = dynamodb.Table('HelpHubServicesTest')
     data = table.scan()
     items = data['Items']
     return items
 
-def subtract_products_from_dynamodb(ProdCat,ProdName):
+def get_service_from_dynamodb(ServiceID):
+    # dynamodb = boto3.client('dynamodb', region_name='eu-central-1')
+    # data = dynamodb.get_item(
+    #     TableName='HelpHubServicesTest',
+    #     Key={
+    #         'ServiceID': {
+    #             'S': ServiceID
+    #         }
+    #     }
+    #     )
     dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
-    table = dynamodb.Table('W10Group1Product')
-    product_info = table.query(KeyConditionExpression=Key('ProdCat').eq(ProdCat) & Key('ProdName').eq(ProdName))
+    table = dynamodb.Table('HelpHubServicesTest')
+    product_info = table.query(KeyConditionExpression=Key('ServiceID').eq(ServiceID))
     data = product_info['Items']
-    newstock = int(data[0]['ProdStock'])-1
-    table.update_item(
-        Key={'ProdCat': ProdCat,'ProdName': ProdName},
-        UpdateExpression="SET ProdStock= :s",
-        ExpressionAttributeValues={':s':newstock},
-    )
-    return str(newstock)
+    # newstock = int(data[0]['ProdStock'])-1
+    # table.update_item(
+    #     Key={'ProdCat': ProdCat,'ProdName': ProdName},
+    #     UpdateExpression="SET ProdStock= :s",
+    #     ExpressionAttributeValues={':s':newstock},
+    # )
+    return data[0]
 
-def add_order_to_to_dynamodb(ProdName):
+def add_job_to_dynamodb(name, email, city, job, reward, message):
     id = str(uuid.uuid4())
-    OrderNumber = str('ORD#' + id)
     dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
-    table = dynamodb.Table('W10Group1UsersOrders')
-    table.update_item(
-        Key={'PrimaryAccountID': 'ACC#007','SortKey': OrderNumber},
-        UpdateExpression="SET ProdName= :s",
-        ExpressionAttributeValues={':s':ProdName},
+    table = dynamodb.Table('HelpHubServicesTest')
+    # table.update_item(
+    #     Key={'OrderID': id},
+    #     UpdateExpression="SET ProdName= :s",
+    #     ExpressionAttributeValues={':s': name},
+    # )
+    table.put_item(
+        TableName="HelpHubServicesTest",
+        Item={
+            'ServiceID':id,
+            'ServiceCity':city,
+            'ServiceOwnerName':name,
+            'ServiceOwnerEmail':email,
+            'RequestedJob':job,
+            'ServiceReward':reward,
+            'ServiceOwnerMessage':message,
+            'ServiceVisibility': True,
+        }
     )
-    return OrderNumber
+    return id
 
-@application.route('/')
-@application.route('/home')
+def add_order_to_dynamodb(name, email, message, ServiceID):
+    id = str(uuid.uuid4())
+    dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
+    table = dynamodb.Table('HelpHubOrdersTest')
+    table.put_item(
+        Item={
+            'OrderID':id,
+            'ServiceID': ServiceID,
+            'ServiceProviderName':name,
+            'ServiceProviderEmail':email,
+            'ServiceProviderMessage':message,
+        }
+    )
+    return id
+
+def remove_service_visibility_from_dynamodb(ServiceID):
+    dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
+    table = dynamodb.Table('HelpHubServicesTest')
+    table.update_item(
+        Key={'ServiceID': ServiceID},
+        UpdateExpression="SET ServiceVisibility= :s",
+        ExpressionAttributeValues={':s':False},
+    )
+    return True
+
+@application.route('/', methods = ['GET', 'POST'])
+@application.route('/home', methods = ['GET', 'POST'])
 def home_page():
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
+        city = request.form['city']
+        job = request.form['job']
+        reward = request.form['reward']
         message = request.form['message']
-        # Do something with the username and password
-        add_order_to_to_dynamodb(name)
+        if name and email and city and job and reward and message:
+            # Do something with the username and password
+            add_job_to_dynamodb(name, email, city, job, reward, message)
+            flash('Information added successfully!')
+        else:
+            flash('Error: All fields are required')
+        
     return render_template('home.html')
 
 @application.route('/market')
 def market_page():
-    items = get_products_from_dynamodb()
+    items = get_jobs_from_dynamodb()
     return render_template('market.html', items=items)
 
-@application.route('/market/purchase/<ProdCat>/<ProdName>')
-def purchase_page(ProdCat,ProdName):
-    data = subtract_products_from_dynamodb(ProdCat,ProdName)
-    OrderNumber = add_order_to_to_dynamodb(ProdName)
-    return render_template('purchase.html', data=data, ProdName = ProdName, OrderNumber = OrderNumber)
+@application.route('/market/details/<ServiceID>', methods = ['GET', 'POST'])
+def details_page(ServiceID):
+    data = get_service_from_dynamodb(ServiceID)
+
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        message = request.form['message']
+        if name and email and message:
+            # Do something with the username and password
+            add_order_to_dynamodb(name, email, message, ServiceID)
+            remove_service_visibility_from_dynamodb(ServiceID)
+            flash('Information added successfully!')
+        else:
+            flash('Error: All fields are required')
+    
+    return render_template('details.html', data=data)
 
 
 if __name__ == '__main__':
