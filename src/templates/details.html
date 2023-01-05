@@ -46,7 +46,7 @@
                 }
                 </style>
 
-            <form method="post" action="/market/details/{{ data['ServiceID'] }}">
+            <form method="post" action="/jobs/details/{{ data['ServiceID'] }}">
                 <input type="text" name="name" placeholder="Name" style="height: 30px; width: 200px;">
                 <input type="text" name="email" placeholder="Email" style="height: 30px; width: 200px;">
                 <textarea name="message" rows="3" cols="90" placeholder="Additional information for requester"></textarea>       
@@ -63,7 +63,7 @@
             {% endwith %}
             <br><br><br>
             <p>
-                <a href="/market"><button class="btn btn-outline btn-success">Back to Market</button></a>
+                <a href="/jobs"><button class="btn btn-outline btn-success">Back to jobs</button></a>
             </p>
         </div>
 {% endblock %}

@@ -108,12 +108,52 @@ def home_page():
         
     return render_template('home.html')
 
-@application.route('/market')
-def market_page():
-    items = get_jobs_from_dynamodb()
-    return render_template('market.html', items=items)
+# @application.route('/jobs')
+# def jobs_page():
+#     items = get_jobs_from_dynamodb()
+#     return render_template('jobs.html', items=items)
 
-@application.route('/market/details/<ServiceID>', methods = ['GET', 'POST'])
+# @application.route('/jobs?sort=<request>')
+# def view_jobs(request):
+#     # Retrieve the 'sort' query parameter
+#     sort = request.GET.get('sort')
+#     if sort == 'area':
+#         items = sorted(items, key=lambda x: x['ServiceCity'])
+#     elif sort == 'name':
+#         items = sorted(items, key=lambda x: x['RequestedJob'])
+#     elif sort == 'reward':
+#         items = sorted(items, key=lambda x: x['ServiceReward'])
+#     else:
+#         # Sort by some default field if no 'sort' parameter is provided
+#         items = sorted(items, key=lambda x: x['RequestedJob'])
+
+#     # Render the template
+#     return render_template('jobs.html', items=items)
+
+@application.route('/jobs')
+def jobs_page():
+    items = get_jobs_from_dynamodb()
+    sort = request.args.get('sort')
+    order = request.args.get('order')
+    if sort == 'area':
+        items = sorted(items, key=lambda x: x['ServiceCity'])
+    elif sort == 'name':
+        items = sorted(items, key=lambda x: x['RequestedJob'])
+    elif sort == 'reward':
+        items = sorted(items, key=lambda x: x['ServiceReward'])
+    else:
+        # Sort by some default field if no 'sort' parameter is provided
+        items = sorted(items, key=lambda x: x['RequestedJob'])
+    if order == 'desc':
+        items = list(reversed(items))
+
+    # Render the template
+    return render_template('jobs.html', items=items)
+
+
+
+
+@application.route('/jobs/details/<ServiceID>', methods = ['GET', 'POST'])
 def details_page(ServiceID):
     data = get_service_from_dynamodb(ServiceID)
 

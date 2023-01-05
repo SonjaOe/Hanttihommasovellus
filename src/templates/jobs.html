@@ -1,16 +1,17 @@
 {% extends 'base.html' %}
 {% block title %}
-  Market Page
+  Jobs
 {% endblock %}
+
 
 {% block content %}
       <table class="table table-hover table-dark">
         <thead>
             <tr>
                 <!-- Your Columns HERE -->
-                <th scope="col">Area</th>                
-                <th scope="col">Name</th>
-                <th scope="col">Reward</th>
+                <th scope="col">Area&nbsp;<a href="?sort=area&order=asc">&uarr;</a>&nbsp;<a href="?sort=area&order=desc">&darr;</a></th>                
+                <th scope="col">Name&nbsp;<a href="?sort=name&order=asc">&uarr;</a>&nbsp;<a href="?sort=name&order=desc">&darr;</a></th>
+                <th scope="col">Reward&nbsp;<a href="?sort=reward&order=asc">&uarr;</a>&nbsp;<a href="?sort=reward&order=desc">&darr;</a></th>
                 <th scope="col">Help</th>
             </tr>
         </thead>
@@ -23,7 +24,7 @@
                         <td>{{ item['RequestedJob'] }}</td>
                         <td>{{ item['ServiceReward'] }}</td>
                         <td>                   
-                            <a href="/market/details/{{ item['ServiceID'] }}"><button class="btn btn-outline btn-success">Check details and help</button></a>
+                            <a href="/jobs/details/{{ item['ServiceID'] }}"><button class="btn btn-outline btn-success">Check details and help</button></a>
                         </td>
                     </tr>
                 {% endif %}
