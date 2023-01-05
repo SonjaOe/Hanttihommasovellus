@@ -1,13 +1,72 @@
 {% extends 'base.html' %}
+
+
+
+
+
 {% block title %}
-    Home Page
+    HandyHub
 {% endblock %}
 
 {% block content %}
-    <h1>Welcome to Our Shop</h1>
-    <a href="/market"><button class="btn btn-outline btn-success">Click here to the market!</button></a>
-    <form action="{{ url_for('home_page') }}" method="post">
-        Project file path: <input type="text" name="projectFilePath"><br>
-        <input type="submit" value="Submit">
+
+    <style>
+        .center {
+            text-align: center;
+        }
+    </style>
+    <div class="center">
+        <h1>Welcome to HandyHub</h1>
+        <a href="/jobs"><button class="btn btn-outline btn-success">Click here to view all jobs!</button></a>
+        <br>
+        <br>
+        <h1>Make new request:</h1>
+    </div>
+
+    <style>
+        form {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 50%;
+            margin: 0 auto;
+        }
+        form > * {
+            margin: 10px auto;
+        }
+        </style>
+
+    <form method="post" action="/home">
+        <input type="text" name="name" placeholder="Name" style="height: 30px; width: 200px;">
+        <input type="text" name="email" placeholder="Email" style="height: 30px; width: 200px;">
+        <input type="text" name="city" placeholder="City" style="height: 30px; width: 200px;">
+        <input type="text" name="job" placeholder="Job" style="height: 30px; width: 200px;">
+        <input type="text" name="reward" placeholder="Reward" style="height: 30px; width: 200px;">
+        <textarea name="message" rows="3" cols="90" placeholder="Describe the job that you need help with"></textarea>       
+        <input type="submit" value="Post a job" class="btn btn-primary">
     </form>
+
+    {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+<style>
+    .center {
+        text-align: center;
+    }
+</style>
+<div class="center">
+<br>
+<br>
+<br>
+<img src="https://handyhub.s3.eu-central-1.amazonaws.com/images/handy_hub_full.png" alt="HandyHub">
+</div>
+
 {% endblock %}
+
+
