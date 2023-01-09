@@ -23,16 +23,16 @@
   </style>
   <div class="center">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark justify-content-center">
-      <a class="navbar-brand mx-auto" href="#"><img src="https://handyhub.s3.eu-central-1.amazonaws.com/images/handy_hub_100x100.png" alt="HandyHub" class="mx-auto">   HandyHub</a>
+      <a class="navbar-brand mx-auto" href="{{ url_for('home_page') }}"><img src="https://handyhub.s3.eu-central-1.amazonaws.com/images/handy_hub_100x100.png" alt="HandyHub" class="mx-auto">   HandyHub</a>
       
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="{{ url_for('home_page') }}">Home <span class="sr-only">(current)</span></a>
+        <ul class="navbar-nav center">
+            <li class="nav-item center">
+                <a class="nav-link" href="{{ url_for('home_page') }}">Home<span class="sr-only"></span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('jobs_page') }}">Jobs</a>
