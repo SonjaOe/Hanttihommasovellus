@@ -10,8 +10,8 @@ def client():
 def test_request_home_page(client):
     response = client.get('/home')
     assert response.status_code == 200
-    assert b"Welcome to Our Shop" in response.data
+    assert b"Welcome to the HandyHub" in response.data
 
 def test_request_market_page(client):
-    response = client.get('/market')
+    response = client.get('/jobs')
     assert response.status_code == 200
