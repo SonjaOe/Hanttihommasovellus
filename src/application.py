@@ -12,82 +12,76 @@ application.secret_key = 'your_secret_key'
 
 
 def get_jobs_from_dynamodb():
-    dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
-    table = dynamodb.Table('HelpHubServicesTest')
-    data = table.scan()
-    items = data['Items']
-    return items
+    try:
+        dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
+        table = dynamodb.Table('HandyHubServices')
+        data = table.scan()
+        items = data['Items']
+        return items
+    except:
+        return f'Something went wrong'
 
 def get_service_from_dynamodb(ServiceID):
-    # dynamodb = boto3.client('dynamodb', region_name='eu-central-1')
-    # data = dynamodb.get_item(
-    #     TableName='HelpHubServicesTest',
-    #     Key={
-    #         'ServiceID': {
-    #             'S': ServiceID
-    #         }
-    #     }
-    #     )
-    dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
-    table = dynamodb.Table('HelpHubServicesTest')
-    product_info = table.query(KeyConditionExpression=Key('ServiceID').eq(ServiceID))
-    data = product_info['Items']
-    # newstock = int(data[0]['ProdStock'])-1
-    # table.update_item(
-    #     Key={'ProdCat': ProdCat,'ProdName': ProdName},
-    #     UpdateExpression="SET ProdStock= :s",
-    #     ExpressionAttributeValues={':s':newstock},
-    # )
-    return data[0]
+    try:
+        dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
+        table = dynamodb.Table('HandyHubServices')
+        product_info = table.query(KeyConditionExpression=Key('ServiceID').eq(ServiceID))
+        data = product_info['Items']
+        return data[0]
+    except:
+        return f'Something went wrong'
 
 def add_job_to_dynamodb(name, email, city, job, reward, message):
-    id = str(uuid.uuid4())
-    dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
-    table = dynamodb.Table('HelpHubServicesTest')
-    # table.update_item(
-    #     Key={'OrderID': id},
-    #     UpdateExpression="SET ProdName= :s",
-    #     ExpressionAttributeValues={':s': name},
-    # )
-    table.put_item(
-        TableName="HelpHubServicesTest",
-        Item={
-            'ServiceID':id,
-            'ServiceCity':city,
-            'ServiceOwnerName':name,
-            'ServiceOwnerEmail':email,
-            'RequestedJob':job,
-            'ServiceReward':reward,
-            'ServiceOwnerMessage':message,
-            'ServiceVisibility': True,
-        }
-    )
-    return id
+    try:
+        id = str(uuid.uuid4())
+        dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
+        table = dynamodb.Table('HandyHubServices')
+        table.put_item(
+            Item={
+                'ServiceID':id,
+                'ServiceCity':city,
+                'ServiceOwnerName':name,
+                'ServiceOwnerEmail':email,
+                'RequestedJob':job,
+                'ServiceReward':reward,
+                'ServiceOwnerMessage':message,
+                'ServiceVisibility': True,
+            }
+        )
+        return id
+    except:
+        return f'Something went wrong'
 
 def add_order_to_dynamodb(name, email, message, ServiceID):
-    id = str(uuid.uuid4())
-    dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
-    table = dynamodb.Table('HelpHubOrdersTest')
-    table.put_item(
-        Item={
-            'OrderID':id,
-            'ServiceID': ServiceID,
-            'ServiceProviderName':name,
-            'ServiceProviderEmail':email,
-            'ServiceProviderMessage':message,
-        }
-    )
-    return id
+    try:
+        id = str(uuid.uuid4())
+        dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
+        table = dynamodb.Table('HandyHubOrders')
+        table.put_item(
+            Item={
+                'OrderID':id,
+                'ServiceID': ServiceID,
+                'ServiceProviderName':name,
+                'ServiceProviderEmail':email,
+                'ServiceProviderMessage':message,
+            }
+        )
+        return id
+    except:
+        return f'Something went wrong'
 
 def remove_service_visibility_from_dynamodb(ServiceID):
-    dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
-    table = dynamodb.Table('HelpHubServicesTest')
-    table.update_item(
-        Key={'ServiceID': ServiceID},
-        UpdateExpression="SET ServiceVisibility= :s",
-        ExpressionAttributeValues={':s':False},
-    )
-    return True
+    try:
+        dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
+        table = dynamodb.Table('HandyHubServices')
+        table.update_item(
+            Key={'ServiceID': ServiceID},
+            UpdateExpression="SET ServiceVisibility= :s",
+            ExpressionAttributeValues={':s':False},
+        )
+        return True
+    except:
+        return f'Something went wrong'
 
 @application.route('/', methods = ['GET', 'POST'])
 @application.route('/home', methods = ['GET', 'POST'])
@@ -101,38 +95,23 @@ def home_page():
         message = request.form['message']
         if name and email and city and job and reward and message:
             # Do something with the username and password
-            add_job_to_dynamodb(name, email, city, job, reward, message)
+            try:
+                add_job_to_dynamodb(name, email, city, job, reward, message)
+            except:
+                print('Something went wrong')
             flash('Information added successfully!')
         else:
             flash('Error: All fields are required')
         
     return render_template('home.html')
 
-# @application.route('/jobs')
-# def jobs_page():
-#     items = get_jobs_from_dynamodb()
-#     return render_template('jobs.html', items=items)
-
-# @application.route('/jobs?sort=<request>')
-# def view_jobs(request):
-#     # Retrieve the 'sort' query parameter
-#     sort = request.GET.get('sort')
-#     if sort == 'area':
-#         items = sorted(items, key=lambda x: x['ServiceCity'])
-#     elif sort == 'name':
-#         items = sorted(items, key=lambda x: x['RequestedJob'])
-#     elif sort == 'reward':
-#         items = sorted(items, key=lambda x: x['ServiceReward'])
-#     else:
-#         # Sort by some default field if no 'sort' parameter is provided
-#         items = sorted(items, key=lambda x: x['RequestedJob'])
-
-#     # Render the template
-#     return render_template('jobs.html', items=items)
 
 @application.route('/jobs')
 def jobs_page():
-    items = get_jobs_from_dynamodb()
+    try:
+        items = get_jobs_from_dynamodb()
+    except:
+        return f'Something went wrong'
     sort = request.args.get('sort')
     order = request.args.get('order')
     if sort == 'area':
@@ -152,7 +131,6 @@ def jobs_page():
 
 
 
-
 @application.route('/jobs/details/<ServiceID>', methods = ['GET', 'POST'])
 def details_page(ServiceID):
     data = get_service_from_dynamodb(ServiceID)
@@ -163,8 +141,11 @@ def details_page(ServiceID):
         message = request.form['message']
         if name and email and message:
             # Do something with the username and password
-            add_order_to_dynamodb(name, email, message, ServiceID)
-            remove_service_visibility_from_dynamodb(ServiceID)
+            try:
+                add_order_to_dynamodb(name, email, message, ServiceID)
+                remove_service_visibility_from_dynamodb(ServiceID)
+            except:
+                print('Something went wrong')
             flash('Information added successfully!')
         else:
             flash('Error: All fields are required')
