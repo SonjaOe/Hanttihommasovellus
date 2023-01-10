@@ -2,7 +2,7 @@
 <html lang="en">
    <head>
       <!-- Other head elements here -->
-      <link rel="icon" href="https://handyhub.s3.eu-central-1.amazonaws.com/images/handy_hub_32x32.png">
+      <link rel="icon" href="https://handyhub.s3.eu-central-1.amazonaws.com/images/Handyhub-highres-small-logo-32x32.png">
       <!-- Required meta tags -->
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -19,11 +19,18 @@
     <style>
       .center {
           text-align: center;
+          background-color: #003163;
       }
+      nav .navbar-nav li a{
+  color: white !important;
+  }
+    nav a {color: white !important;}
+
+      
   </style>
   <div class="center">
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark justify-content-center">
-      <a class="navbar-brand mx-auto" href="{{ url_for('home_page') }}"><img src="https://handyhub.s3.eu-central-1.amazonaws.com/images/handy_hub_100x100.png" alt="HandyHub" class="mx-auto">   HandyHub</a>
+    <nav color="#003163" class="navbar navbar-expand-md justify-content-center">
+      <a class="navbar-brand mx-auto" href="{{ url_for('home_page') }}"><img src="https://handyhub.s3.eu-central-1.amazonaws.com/images/handyhub-high-resolution-color-logo100x100.png" alt="HandyHub" class="mx-auto">   HandyHub</a>
       
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
@@ -32,7 +39,7 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav center">
             <li class="nav-item center">
-                <a class="nav-link" href="{{ url_for('home_page') }}">Home<span class="sr-only"></span></a>
+                <a  class="nav-link" href="{{ url_for('home_page') }}">Home<span class="sr-only"></span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('jobs_page') }}">Jobs</a>
@@ -67,8 +74,8 @@
    </body>
    <style>
       body {
-      background-color: #212121;
-      color: white
+      background-color: #003163;
+      color: rgb(255, 255, 255)
       }
    </style>
 </html>
