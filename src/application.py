@@ -8,12 +8,19 @@ from boto3.dynamodb.conditions import Key
 import uuid
 import os
 from time import sleep
+from datetime import datetime
 
 
 application = Flask(__name__)
 application.secret_key = 'your_secret_key'
 
-
+def get_datetime():
+    try:
+        now = datetime.now()
+        time = now.strftime("%Y-%m-%d, %H:%M:%S")
+        return time
+    except:
+        return f'Something went wrong'
 
 def upload_to_s3(file, id):
     s3 = boto3.client('s3',region_name='eu-central-1')
@@ -60,10 +67,12 @@ def get_service_from_dynamodb(ServiceID):
 def add_job_to_dynamodb(name, email, city, job, reward, message):
     try:
         id = str(uuid.uuid4())
+        date = get_datetime()
         dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
         table = dynamodb.Table('HandyHubServices')
         table.put_item(
             Item={
+                'ServiceCreated':date,
                 'ServiceID':id,
                 'ServiceCity':city,
                 'ServiceOwnerName':name,
@@ -152,8 +161,8 @@ def jobs_page():
         items = sorted(items, key=lambda x: x['ServiceCity'])
     elif sort == 'name':
         items = sorted(items, key=lambda x: x['RequestedJob'])
-    elif sort == 'reward':
-        items = sorted(items, key=lambda x: x['ServiceReward'])
+    elif sort == 'posted':
+        items = sorted(items, key=lambda x: x['ServiceCreated'])
     else:
         # Sort by some default field if no 'sort' parameter is provided
         items = sorted(items, key=lambda x: x['RequestedJob'])

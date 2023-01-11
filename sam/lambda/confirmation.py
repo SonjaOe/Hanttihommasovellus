@@ -33,8 +33,8 @@ def lambda_handler(event, context):
       <head>
         <style>
           body {
-            background-color: #ffc107;
-            color: #333;
+            background-color: #003066;
+            color: #ffffff;
             font-family: sans-serif;
             margin: 0;
             padding: 0;
@@ -46,7 +46,7 @@ def lambda_handler(event, context):
             text-align: center;
           }
           h1 {
-            color: #333;
+            color: #ffffff;
             font-size: 24px;
             margin: 10px 0;
           }
@@ -54,7 +54,7 @@ def lambda_handler(event, context):
             margin: 0 0 10px;
           }
           a {
-            color: #333;
+            color: #ffffff;
             text-decoration: none;
           }
           a:hover {
@@ -67,17 +67,24 @@ def lambda_handler(event, context):
       <body>
         <div class="container">
             <h1>Congratulations {data_from_service_table['ServiceOwnerName']}!</h1>
-            <p>{data['ServiceProviderName']} has accepted your job offer with following message attached: {data['ServiceProviderMessage']}</p>
-            <p>Job details ID: {data['ServiceID']}</p>
-            <p>{data_from_service_table['RequestedJob']}, Payment {data_from_service_table['ServiceReward']}, location: {data_from_service_table['ServiceCity']}.</p>
-            <p>{data['ServiceProviderName']}'s contact info below. </p>
+            <p>{data['ServiceProviderName']} has accepted your job offer with following message attached:<b> {data['ServiceProviderMessage']}</b></p>
+            <br>
+            <p><b>Job details ID:</b> {data['ServiceID']}</p>
+            <p><b>Job:</b> {data_from_service_table['RequestedJob']}
+            <br>
+            <b>Payment:</b> {data_from_service_table['ServiceReward']}
+            <br>
+            <b>Location:</b> {data_from_service_table['ServiceCity']}.</p>
+            <br>
+            <p><b>{data['ServiceProviderName']}'s</b> contact info below. </p>
             <p>{data['ServiceProviderName']}, {data['ServiceProviderEmail']} </p>
+            <br>
             <p>Please contact {data['ServiceProviderName']} regarding the details of the job, such as the address and a suitable time.</p>
             <br>
             <br>
-            <p>Sincerely,</p> 
-            <p>the whole HandyHub team</p>
-            <img src="https://handyhub.s3.eu-central-1.amazonaws.com/images/handy_hub_100x100.png" alt="HandyHub">
+            <p><b>Sincerely,</p> 
+            <p>the whole HandyHub team</b></p>
+            <img src="https://handyhub.s3.eu-central-1.amazonaws.com/images/handyhub-high-resolution-color-logo100x100.png" alt="HandyHub">
 
         </div>
       </body>
@@ -89,16 +96,22 @@ def lambda_handler(event, context):
         <div class="container">
             <h1>Congratulations {data['ServiceProviderName']}!</h1>
             <p>You have succesfully accepted {data_from_service_table['ServiceOwnerName']}'s job offer.</p>
-            <p>Job details ID: {data['ServiceID']}</p>
-            <p>{data_from_service_table['RequestedJob']}, Reward {data_from_service_table['ServiceReward']}, location: {data_from_service_table['ServiceCity']}.</p>
-            <p>Please see {data_from_service_table['ServiceOwnerName']}'s contact info below. </p>
+            <br>
+            <p><b>Job details ID:</b> {data['ServiceID']}</p>
+            <p><b>Job:</b> {data_from_service_table['RequestedJob']}
+            <br>
+            <b>Payment:</b> {data_from_service_table['ServiceReward']}
+            <br>
+            <b>Location:</b> {data_from_service_table['ServiceCity']}.</p>
+            <br>
+            <p>Please see <b>{data_from_service_table['ServiceOwnerName']}'s</b> contact info below. </p>
             <p>{data_from_service_table['ServiceOwnerName']}, {data_from_service_table['ServiceOwnerEmail']} </p>
             <p>Please contact {data_from_service_table['ServiceOwnerName']} regarding the details of the job, such as the address and a suitable time.</p>
             <br>
             <br>
-            <p>Sincerely,</p> 
-            <p>the whole HandyHub team</p>
-            <img src="https://handyhub.s3.eu-central-1.amazonaws.com/images/handy_hub_100x100.png" alt="HandyHub">
+            <p><b>Sincerely,</p> 
+            <p>the whole HandyHub team</b></p>
+            <img src="https://handyhub.s3.eu-central-1.amazonaws.com/images/handyhub-high-resolution-color-logo100x100.png" alt="HandyHub">
 
         </div>
       </body>
@@ -145,10 +158,3 @@ def lambda_handler(event, context):
           }
       }
     )
-    
-    # Print the response
-    print(event)
-
-
-
-
