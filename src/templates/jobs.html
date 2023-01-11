@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}
+  Jobs
+{% endblock %}
+
+
+{% block content %}
+<style> table tr th{
+    color: white !important;
+    }
+    table tbody {
+    color: white !important;
+    }
+    tbody tr:hover {background-color: #00264d;} </style>
+      <table class="table">
+        <thead>
+            <tr>
+                <!-- Your Columns HERE -->
+                <th scope="col">Area&nbsp;<a href="?sort=area&order=asc">&uarr;</a>&nbsp;<a href="?sort=area&order=desc">&darr;</a></th>                
+                <th scope="col">Name&nbsp;<a href="?sort=name&order=asc">&uarr;</a>&nbsp;<a href="?sort=name&order=desc">&darr;</a></th>
+                <th scope="col">Reward&nbsp;<a href="?sort=reward&order=asc">&uarr;</a>&nbsp;<a href="?sort=reward&order=desc">&darr;</a></th>
+                <th scope="col">Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            {% for item in items %}
+                {% if item['ServiceVisibility'] %}
+                    <tr>
+                        <td>{{ item['ServiceCity'] }}</td>
+                        <td>{{ item['RequestedJob'] }}</td>
+                        <td>{{ item['ServiceReward'] }}</td>
+                        <td>                   
+                            <a href="/jobs/details/{{ item['ServiceID'] }}"><button class="btn btn-outline btn-success">Check details and help</button></a>
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+

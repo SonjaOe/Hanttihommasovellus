@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: HandyHub 
+
+Resources:
+  DDBTableProduct:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "HandyHubServices"
+      AttributeDefinitions:
+        -
+          AttributeName: "ServiceID"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: "ServiceID"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+  DDBTableUsersOrders:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: "HandyHubOrders"
+      AttributeDefinitions:
+        -
+          AttributeName: "OrderID"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: "OrderID"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
