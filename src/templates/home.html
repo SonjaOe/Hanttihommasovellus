@@ -55,18 +55,41 @@
             width: 500px;
             height: 200px;    
 }
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    border: 1px solid #007BFF;
+    border-radius: 4px;
+    background-color: #007BFF;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
         </style>
 
-    <form method="post" action="/home" >
+    <form method="post" action="/home">
         <input id="ip1" type="text" name="name" placeholder="Name">
         <input id="ip1" type="text" name="email" placeholder="Email" style="height: 30px; width: 200px;">
         <input id="ip1" type="text" name="city" placeholder="City" style="height: 30px; width: 200px;">
         <input id="ip1" type="text" name="job" placeholder="Job title" style="height: 30px; width: 200px;">
         <input id="ip1" type="text" name="reward" placeholder="Reward" style="height: 30px; width: 200px;">
         <textarea id="ip2" name="message" rows="3" cols="90" placeholder="Describe the job that you need help with"></textarea>
-        <input type="file" id="fileInput" name="file" class="file-input">       
+        <label for="file-upload" class="custom-file-upload">
+            <i class="fa fa-cloud-upload"></i> Upload Image (png)
+        </label>
+        <input id="file-upload" type="file" onchange="updateUploadMessage()"/>
+        <span id="file-upload-message"></span>    
         <input type="submit" value="Post a job" class="btn btn-primary">
+        
     </form>
+
+    <script>
+        function updateUploadMessage() {
+          document.getElementById("file-upload-message").innerHTML = "File selected!";
+        }
+      </script>
+    
 
     {% with messages = get_flashed_messages() %}
   {% if messages %}
