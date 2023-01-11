@@ -38,17 +38,32 @@
             margin: 0 auto;
         }
         form > * {
-            margin: 10px auto;
+            margin: 5px auto;
         }
+        #ip1 {
+            border-radius: 10px;
+            border: 2px solid rgb(31, 178, 236);
+            padding: 15px; 
+            width: 200px;
+            height: 20px;    
+}
+
+        #ip2 {
+            border-radius: 10px;
+            border: 2px solid rgb(31, 178, 236);
+            padding: 20px; 
+            width: 500px;
+            height: 200px;    
+}
         </style>
 
     <form method="post" action="/home" >
-        <input type="text" name="name" placeholder="Name" style="height: 30px; width: 200px;">
-        <input type="text" name="email" placeholder="Email" style="height: 30px; width: 200px;">
-        <input type="text" name="city" placeholder="City" style="height: 30px; width: 200px;">
-        <input type="text" name="job" placeholder="Job title" style="height: 30px; width: 200px;">
-        <input type="text" name="reward" placeholder="Reward" style="height: 30px; width: 200px;">
-        <textarea name="message" rows="3" cols="90" placeholder="Describe the job that you need help with"></textarea>
+        <input id="ip1" type="text" name="name" placeholder="Name">
+        <input id="ip1" type="text" name="email" placeholder="Email" style="height: 30px; width: 200px;">
+        <input id="ip1" type="text" name="city" placeholder="City" style="height: 30px; width: 200px;">
+        <input id="ip1" type="text" name="job" placeholder="Job title" style="height: 30px; width: 200px;">
+        <input id="ip1" type="text" name="reward" placeholder="Reward" style="height: 30px; width: 200px;">
+        <textarea id="ip2" name="message" rows="3" cols="90" placeholder="Describe the job that you need help with"></textarea>
         <input type="file" id="fileInput" name="file" class="file-input">       
         <input type="submit" value="Post a job" class="btn btn-primary">
     </form>
