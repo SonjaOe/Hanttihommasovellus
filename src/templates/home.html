@@ -17,11 +17,11 @@
     </style>
     <div class="center">
         <h1>Welcome to the HandyHub</h1>
-        <p><br>Welcome to HandyHub! We are a platform that connects individuals with local freelancers and service providers. <br>
+        <h4><br>We are a platform that connects individuals with local freelancers and service providers. <br>
             Our platform makes it easy for you to find help with a variety of tasks, including cleaning, moving, handyman services, and more. <br>
             With our rating system you can easily find trusted help. Plus, our platform makes it simple for you to communicate with, <br>
             pay and rate your service providers, ensuring a smooth and seamless experience from start to finish. We're excited to help <br>
-            you get your to-do list done, so give us a try today!
+            you get your to-do list done, so give us a try today!</h4>
         <br><br>
         <a href="/jobs"><button class="btn btn-outline btn-success">Click here to view all jobs!</button></a>
         <br>
@@ -38,19 +38,58 @@
             margin: 0 auto;
         }
         form > * {
-            margin: 10px auto;
+            margin: 5px auto;
         }
+        #ip1 {
+            border-radius: 10px;
+            border: 2px solid rgb(31, 178, 236);
+            padding: 15px; 
+            width: 200px;
+            height: 20px;    
+}
+
+        #ip2 {
+            border-radius: 10px;
+            border: 2px solid rgb(31, 178, 236);
+            padding: 20px; 
+            width: 500px;
+            height: 200px;    
+}
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    border: 1px solid #007BFF;
+    border-radius: 4px;
+    background-color: #007BFF;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
         </style>
 
     <form method="post" action="/home">
-        <input type="text" name="name" placeholder="Name" style="height: 30px; width: 200px;">
-        <input type="text" name="email" placeholder="Email" style="height: 30px; width: 200px;">
-        <input type="text" name="city" placeholder="City" style="height: 30px; width: 200px;">
-        <input type="text" name="job" placeholder="Job title" style="height: 30px; width: 200px;">
-        <input type="text" name="reward" placeholder="Reward" style="height: 30px; width: 200px;">
-        <textarea name="message" rows="3" cols="90" placeholder="Describe the job that you need help with"></textarea>       
+        <input id="ip1" type="text" name="name" placeholder="Name">
+        <input id="ip1" type="text" name="email" placeholder="Email" style="height: 30px; width: 200px;">
+        <input id="ip1" type="text" name="city" placeholder="City" style="height: 30px; width: 200px;">
+        <input id="ip1" type="text" name="job" placeholder="Job title" style="height: 30px; width: 200px;">
+        <input id="ip1" type="text" name="reward" placeholder="Reward" style="height: 30px; width: 200px;">
+        <textarea id="ip2" name="message" rows="3" cols="90" placeholder="Describe the job that you need help with"></textarea>
+        <label for="file-upload" class="custom-file-upload">
+            <i class="fa fa-cloud-upload"></i> Upload Image (png)
+        </label>
+        <input id="file-upload" type="file" onchange="updateUploadMessage()"/>
+        <span id="file-upload-message"></span>    
         <input type="submit" value="Post a job" class="btn btn-primary">
+        
     </form>
+
+    <script>
+        function updateUploadMessage() {
+          document.getElementById("file-upload-message").innerHTML = "File selected!";
+        }
+      </script>
+    
 
     {% with messages = get_flashed_messages() %}
   {% if messages %}

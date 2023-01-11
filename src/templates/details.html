@@ -29,9 +29,15 @@
                 {{ data["ServiceOwnerMessage"] }}
             </p>
             <br>
+            <img src="https://handyhub.s3.eu-central-1.amazonaws.com/{{ ServiceID }}.png">
+            <br>
+            <br>
+            <br>
+            <br>
             <h5>
                 ACCEPT THE JOB
             </h5>
+            
         
             <style>
                 form {
@@ -41,15 +47,29 @@
                     width: 50%;
                     margin: 0 auto;
                 }
+                #ip1 {
+                    border-radius: 10px;
+                    border: 2px solid rgb(31, 178, 236);
+                    padding: 15px; 
+                    width: 200px;
+                    height: 20px;  
+                }
+                #ip2 {
+                    border-radius: 10px;
+                    border: 2px solid rgb(31, 178, 236);
+                    padding: 20px; 
+                    width: 500px;
+                    height: 200px;    
+                }
                 form > * {
-                    margin: 10px auto;
+                    margin: 5px auto;
                 }
                 </style>
 
             <form method="post" action="/jobs/details/{{ data['ServiceID'] }}">
-                <input type="text" name="name" placeholder="Name" style="height: 30px; width: 200px;">
-                <input type="text" name="email" placeholder="Email" style="height: 30px; width: 200px;">
-                <textarea name="message" rows="3" cols="90" placeholder="Additional information for the requester"></textarea>       
+                <input id="ip1" type="text" name="name" placeholder="Name" style="height: 30px; width: 200px;">
+                <input id="ip1" type="text" name="email" placeholder="Email" style="height: 30px; width: 200px;">
+                <textarea id="ip2" name="message" rows="3" cols="90" placeholder="Additional information for the requester"></textarea>       
                 <input type="submit" value="Accept to provide service" class="btn btn-primary">
             </form>
             {% with messages = get_flashed_messages() %}

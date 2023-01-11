@@ -1,11 +1,15 @@
 #!flask/bin/python
 import json
-from flask import Flask, Response, render_template, request, flash
+from flask import Flask, Response, render_template, request, flash, redirect
+from werkzeug.utils import secure_filename
 import optparse
 import boto3
 from boto3.dynamodb.conditions import Key
 import uuid
+import os
+from time import sleep
 from datetime import datetime
+
 
 application = Flask(__name__)
 application.secret_key = 'your_secret_key'
@@ -17,6 +21,28 @@ def get_datetime():
         return time
     except:
         return f'Something went wrong'
+
+def upload_to_s3(file, id):
+    s3 = boto3.client('s3',region_name='eu-central-1')
+    bucket_name = "handyhub"
+    try:
+        filename =  id + ".png"
+        file.save(filename)
+        s3.upload_file(
+                    Bucket = bucket_name,
+                    Filename=filename,
+                    Key = filename
+                )
+        os.remove(filename)
+        
+    except Exception as e:
+        print("Something Happened: ", e)
+        return e
+
+    return 
+
+
+
 
 def get_jobs_from_dynamodb():
     try:
@@ -94,21 +120,29 @@ def remove_service_visibility_from_dynamodb(ServiceID):
 
 @application.route('/', methods = ['GET', 'POST'])
 @application.route('/home', methods = ['GET', 'POST'])
+
 def home_page():
     if request.method == 'POST':
+        file = request.files['file']
+        # if file:
+        #     filename = file.filename
+        #     file.save(f'static/{filename}')
+        #     upload_to_s3(file=open(f'static/{filename}','rb'))
         name = request.form['name']
         email = request.form['email']
         city = request.form['city']
         job = request.form['job']
         reward = request.form['reward']
         message = request.form['message']
-        if name and email and city and job and reward and message:
+        if file and name and email and city and job and reward and message:
             # Do something with the username and password
             try:
-                add_job_to_dynamodb(name, email, city, job, reward, message)
+                id = add_job_to_dynamodb(name, email, city, job, reward, message)
+                upload_to_s3(file, id)
             except:
                 print('Something went wrong')
             flash('Information added successfully!')
+            render_template('home.html')
         else:
             flash('Error: All fields are required')
         
@@ -153,13 +187,16 @@ def details_page(ServiceID):
             try:
                 add_order_to_dynamodb(name, email, message, ServiceID)
                 remove_service_visibility_from_dynamodb(ServiceID)
+                flash('Job accepted successfully!')
+                sleep(1.5)
+                return redirect('/jobs')
             except:
                 print('Something went wrong')
-            flash('Information added successfully!')
+            
         else:
             flash('Error: All fields are required')
     
-    return render_template('details.html', data=data)
+    return render_template('details.html', data=data, ServiceID=ServiceID)
 
 
 if __name__ == '__main__':
@@ -185,3 +222,88 @@ if __name__ == '__main__':
         host=options.host,
         port=int(options.port)
     )
+
+# #####################
+
+# #button in html
+
+# <form>
+#   <input type="file" id="fileInput" />
+#   <button type="submit">Upload</button>
+# </form>
+
+
+# #javascript to handle the form submission and get the data
+
+# const form = document.querySelector('form');
+# form.addEventListener('submit', e => {
+#   e.preventDefault();
+#   const fileInput = document.querySelector('#fileInput');
+#   const file = fileInput.files[0];
+#   const formData = new FormData();
+#   formData.append('file', file);
+
+#   // Send the file to the server
+#   fetch('/upload', {
+#     method: 'POST',
+#     body: formData
+#   })
+#   .then(response => {
+#     // Do something with the response
+#   });
+# });
+
+# #on the server backend s3
+
+# import boto3
+
+# s3 = boto3.client('s3')
+
+# def upload_to_s3(file, bucket_name, acl="public-read"):
+
+#     try:
+#         s3.upload_fileobj(
+#             file,
+#             bucket_name,
+#             file.filename,
+#             ExtraArgs={
+#                 "ACL": acl,
+#                 "ContentType": file.content_type
+#             }
+#         )
+#     except Exception as e:
+#         print("Something Happened: ", e)
+#         return e
+
+#     return f"https://{bucket_name}.s3.amazonaws.com/{file.filename}"
+
+#     ####
+    
+# ###############    
+# In your HTML template, create a form with an input type of "file" and a button to submit the form:
+# Copy code
+# <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+#   <input type="file" id="fileInput" name="file">
+#   <button type="submit">Upload</button>
+# </form>
+
+# In your Flask app, create a route to handle the form submission and file upload:
+# Copy code
+# from flask import Flask, request, redirect, url_for
+
+# app = Flask(__name__)
+
+# @app.route('/upload', methods=['POST'])
+# def upload():
+#     file = request.files['file']
+#     if file:
+#         filename = file.filename
+#         file.save(f'static/{filename}')
+#         return redirect(url_for('uploaded_file',
+#                                 filename=filename))
+#     return 'No File Selected'
+# This will handle the form submission and save the file to the static folder.
+
+# Once the file is saved you can then proceed to upload the file on your s3 bucket using the same code that i provided earlier
+# Copy code
+# upload_to_s3(file=open(f'static/{filename}','rb'),bucket_name='<YOUR-BUCKET-NAME>')
