@@ -16,9 +16,10 @@
         <thead>
             <tr>
                 <!-- Your Columns HERE -->
+                <th scope="col">Posted&nbsp;<a href="?sort=posted&order=asc">&uarr;</a>&nbsp;<a href="?sort=posted&order=desc">&darr;</a></th>
                 <th scope="col">Area&nbsp;<a href="?sort=area&order=asc">&uarr;</a>&nbsp;<a href="?sort=area&order=desc">&darr;</a></th>                
                 <th scope="col">Name&nbsp;<a href="?sort=name&order=asc">&uarr;</a>&nbsp;<a href="?sort=name&order=desc">&darr;</a></th>
-                <th scope="col">Reward&nbsp;<a href="?sort=reward&order=asc">&uarr;</a>&nbsp;<a href="?sort=reward&order=desc">&darr;</a></th>
+                <th scope="col">Reward</th>
                 <th scope="col">Details</th>
             </tr>
         </thead>
@@ -27,6 +28,7 @@
             {% for item in items %}
                 {% if item['ServiceVisibility'] %}
                     <tr>
+                        <td>{{ item['ServiceCreated'] }}</td>
                         <td>{{ item['ServiceCity'] }}</td>
                         <td>{{ item['RequestedJob'] }}</td>
                         <td>{{ item['ServiceReward'] }}</td>
