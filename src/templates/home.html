@@ -17,11 +17,11 @@
     </style>
     <div class="center">
         <h1>Welcome to the HandyHub</h1>
-        <p><br>Welcome to HandyHub! We are a platform that connects individuals with local freelancers and service providers. <br>
+        <h4><br>We are a platform that connects individuals with local freelancers and service providers. <br>
             Our platform makes it easy for you to find help with a variety of tasks, including cleaning, moving, handyman services, and more. <br>
             With our rating system you can easily find trusted help. Plus, our platform makes it simple for you to communicate with, <br>
             pay and rate your service providers, ensuring a smooth and seamless experience from start to finish. We're excited to help <br>
-            you get your to-do list done, so give us a try today!
+            you get your to-do list done, so give us a try today!</h4>
         <br><br>
         <a href="/jobs"><button class="btn btn-outline btn-success">Click here to view all jobs!</button></a>
         <br>
@@ -42,14 +42,14 @@
         }
         </style>
 
-    <form method="post" action="/home">
+    <form method="post" action="/home" >
         <input type="text" name="name" placeholder="Name" style="height: 30px; width: 200px;">
         <input type="text" name="email" placeholder="Email" style="height: 30px; width: 200px;">
         <input type="text" name="city" placeholder="City" style="height: 30px; width: 200px;">
         <input type="text" name="job" placeholder="Job title" style="height: 30px; width: 200px;">
         <input type="text" name="reward" placeholder="Reward" style="height: 30px; width: 200px;">
         <textarea name="message" rows="3" cols="90" placeholder="Describe the job that you need help with"></textarea>
-        <input type="file" id="fileInput" name="file">       
+        <input type="file" id="fileInput" name="file" class="file-input">       
         <input type="submit" value="Post a job" class="btn btn-primary">
     </form>
 

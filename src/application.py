@@ -1,33 +1,38 @@
 #!flask/bin/python
 import json
-from flask import Flask, Response, render_template, request, flash
+from flask import Flask, Response, render_template, request, flash, redirect
+from werkzeug.utils import secure_filename
 import optparse
 import boto3
 from boto3.dynamodb.conditions import Key
 import uuid
+import os
+from time import sleep
+
 
 application = Flask(__name__)
 application.secret_key = 'your_secret_key'
 
 
 
-def upload_to_s3(file):
+def upload_to_s3(file, id):
     s3 = boto3.client('s3',region_name='eu-central-1')
+    bucket_name = "handyhub"
     try:
-        s3.upload_fileobj(
-            file,
-            'handyhub',
-            file.filename
-            # ExtraArgs={
-            #     "ACL": acl,
-            #     "ContentType": file.content_type
-            # }
-        )
+        filename =  id + ".png"
+        file.save(filename)
+        s3.upload_file(
+                    Bucket = bucket_name,
+                    Filename=filename,
+                    Key = filename
+                )
+        os.remove(filename)
+        
     except Exception as e:
         print("Something Happened: ", e)
         return e
 
-    return f"https://handyhub.s3.amazonaws.com/{file.filename}"
+    return 
 
 
 
@@ -123,11 +128,12 @@ def home_page():
         if file and name and email and city and job and reward and message:
             # Do something with the username and password
             try:
-                add_job_to_dynamodb(name, email, city, job, reward, message)
-                upload_to_s3(file)
+                id = add_job_to_dynamodb(name, email, city, job, reward, message)
+                upload_to_s3(file, id)
             except:
                 print('Something went wrong')
             flash('Information added successfully!')
+            render_template('home.html')
         else:
             flash('Error: All fields are required')
         
@@ -172,13 +178,16 @@ def details_page(ServiceID):
             try:
                 add_order_to_dynamodb(name, email, message, ServiceID)
                 remove_service_visibility_from_dynamodb(ServiceID)
+                flash('Job accepted successfully!')
+                sleep(1.5)
+                return redirect('/jobs')
             except:
                 print('Something went wrong')
-            flash('Information added successfully!')
+            
         else:
             flash('Error: All fields are required')
     
-    return render_template('details.html', data=data)
+    return render_template('details.html', data=data, ServiceID=ServiceID)
 
 
 if __name__ == '__main__':
