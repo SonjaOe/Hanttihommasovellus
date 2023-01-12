@@ -36,3 +36,4 @@ blog.db
 
 sam/.aws-sam/
 sam/samconfig.toml
+terraform/
