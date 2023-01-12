@@ -158,14 +158,14 @@ def jobs_page():
     sort = request.args.get('sort')
     order = request.args.get('order')
     if sort == 'area':
-        items = sorted(items, key=lambda x: x['ServiceCity'])
+        items = sorted(items, reverse= True, key=lambda x: x['ServiceCity'])
     elif sort == 'name':
-        items = sorted(items, key=lambda x: x['RequestedJob'])
+        items = sorted(items, reverse= True, key=lambda x: x['RequestedJob'])
     elif sort == 'posted':
-        items = sorted(items, key=lambda x: x['ServiceCreated'])
+        items = sorted(items, reverse= True, key=lambda x: x.get('ServiceCreated', "2022-01-11, 15:49:15"))
     else:
         # Sort by some default field if no 'sort' parameter is provided
-        items = sorted(items, key=lambda x: x['RequestedJob'])
+        items = sorted(items, reverse= True, key=lambda x: x['ServiceCreated'])
     if order == 'desc':
         items = list(reversed(items))
 
