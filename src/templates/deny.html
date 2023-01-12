@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}
+  Deny of {{ data["RequestedJob"] }}, {{ data["ServiceCity"] }}
+{% endblock %}
+
+{% block content %}
+<style>
+    .center {
+        text-align: center;
+    }
+</style>
+<div class="center">
+            <h1>
+                {{ data["ServiceID"] }}
+            </h1>
+            <h2>
+                {{ data["RequestedJob"] }}, {{ data["ServiceCity"] }}
+            </h2>
+            <br>
+            <h3>
+                You have successfully denied the request and it is visible again in Jobs page.<br>
+            </h3>
+            <br>
+            <a href="/jobs"><button class="btn btn-outline btn-success">Click here to the Jobs page!</button></a>
+            <br>
+            <br>
+            <br>
+            <br>
+            <img src="https://handyhub.s3.eu-central-1.amazonaws.com/images/logo-no-background.png" alt="HandyHub">
+        </div>
+{% endblock %}
