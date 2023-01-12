@@ -129,7 +129,7 @@ def add_service_visibility_to_dynamodb(ServiceID):
     except:
         return f'Something went wrong'        
 
-def get_order_email_from_dynamodb(ServiceID):
+def get_order_email_from_dynamodb_and_delete_order_item(ServiceID):
     try:
         dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
         table = dynamodb.Table('HandyHubOrders')
@@ -140,9 +140,32 @@ def get_order_email_from_dynamodb(ServiceID):
     try:
         for item in items:
             if item['ServiceID'] == ServiceID:
+                # Retalated to delete_item_from_order_table function that doesn't work
+                # try:
+                #     delete_item_from_order_table(item['OrderID'])
+                # except:
+                #     return f'Something went wrong'
                 return item['ServiceProviderEmail']
     except:
         return f'Something went wrong'
+
+# Doesn't work atm
+# def delete_item_from_order_table(ServiceID):
+#     try:
+#         # Connect to DynamoDB
+#         dynamodb = boto3.resource('dynamodb')
+#         table = dynamodb.Table('HandyHubOrders', region_name='eu-central-1')
+
+#         # Define the condition for deletion
+#         condition = {
+#             'Attribute_exists(non_key_attribute)': True,
+#             'attribute_not_exists(another_attribute)': True
+#         }
+
+#         # Delete the item from the table
+#         table.delete_item(Key={'ServiceID': ServiceID}, ConditionExpression=condition)
+#     except:
+#         return f'Something went wrong'
 
 def send_deny_email_to_provider(data_order_email, data_from_service_table):
     # Create an SES client
@@ -302,7 +325,7 @@ def deny_page(ServiceID):
     try:
         data = get_service_from_dynamodb(ServiceID)
         add_service_visibility_to_dynamodb(ServiceID)
-        data_order_email = get_order_email_from_dynamodb(ServiceID)
+        data_order_email = get_order_email_from_dynamodb_and_delete_order_item(ServiceID)
         send_deny_email_to_provider(data_order_email, data)
     except:
         print('Something went wrong')
