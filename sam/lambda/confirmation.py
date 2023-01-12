@@ -82,6 +82,14 @@ def lambda_handler(event, context):
             <p>Please contact {data['ServiceProviderName']} regarding the details of the job, such as the address and a suitable time.</p>
             <br>
             <br>
+            <h3>If you want to deny this help request and not choose this provider:
+            <br>
+            <br><a href="https://radianssi.net/jobs/deny/{data['ServiceID']}">CLICK HERE TO CANCEL!</a> 
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
             <p><b>Sincerely,</p> 
             <p>the whole HandyHub team</b></p>
             <img src="https://handyhub.s3.eu-central-1.amazonaws.com/images/handyhub-high-resolution-color-logo100x100.png" alt="HandyHub">
