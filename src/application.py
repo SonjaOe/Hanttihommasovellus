@@ -42,8 +42,6 @@ def upload_to_s3(file, id):
     return 
 
 
-
-
 def get_jobs_from_dynamodb():
     try:
         dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
@@ -118,16 +116,117 @@ def remove_service_visibility_from_dynamodb(ServiceID):
     except:
         return f'Something went wrong'
 
+def add_service_visibility_to_dynamodb(ServiceID):
+    try:
+        dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
+        table = dynamodb.Table('HandyHubServices')
+        table.update_item(
+            Key={'ServiceID': ServiceID},
+            UpdateExpression="SET ServiceVisibility= :s",
+            ExpressionAttributeValues={':s':True},
+        )
+        return True
+    except:
+        return f'Something went wrong'        
+
+def get_order_email_from_dynamodb(ServiceID):
+    try:
+        dynamodb = boto3.resource('dynamodb', region_name='eu-central-1')
+        table = dynamodb.Table('HandyHubOrders')
+        data = table.scan()
+        items = data['Items']
+    except:
+        return f'Something went wrong'
+    try:
+        for item in items:
+            if item['ServiceID'] == ServiceID:
+                return item['ServiceProviderEmail']
+    except:
+        return f'Something went wrong'
+
+def send_deny_email_to_provider(data_order_email, data_from_service_table):
+    # Create an SES client
+    client = boto3.client('ses')
+    # Set the email parameters
+    sender = 'anssi.ylileppala@brightstraining.com'
+    recipient = data_order_email
+    body1 = '''
+    <html>
+      <head>
+        <style>
+          body {
+            background-color: #003066;
+            color: #ffffff;
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+          }
+          .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+          }
+          h1 {
+            color: #ffffff;
+            font-size: 24px;
+            margin: 10px 0;
+          }
+          p {
+            margin: 0 0 10px;
+          }
+          a {
+            color: #ffffff;
+            text-decoration: none;
+          }
+          a:hover {
+            color: #ffc107;
+          }
+        </style>
+      </head>
+      '''
+    body3 = f'''  
+      <body>
+        <div class="container">
+            <h1>Unfortunaly your kind offer to {data_from_service_table['RequestedJob']} has been denied this time.</h1>
+            <br>
+            <br>
+            <br>
+            <p><b>Sincerely,</p> 
+            <p>the whole HandyHub team</b></p>
+            <img src="https://handyhub.s3.eu-central-1.amazonaws.com/images/handyhub-high-resolution-color-logo100x100.png" alt="HandyHub">
+
+        </div>
+      </body>
+    </html>
+    '''
+    body_service_provider = body1 + body3
+    # Send the email to Service orderer
+    response = client.send_email(
+    Source=sender,
+    Destination={
+        'ToAddresses': [
+            recipient,
+        ]
+    },
+    Message={
+        'Subject': {
+            'Data': f"Your offer to {data_from_service_table['RequestedJob']} has been denied"
+        },
+        'Body': {
+            'Html': {
+                'Data': body_service_provider
+            }
+        }
+    }
+    )
+
+
 @application.route('/', methods = ['GET', 'POST'])
 @application.route('/home', methods = ['GET', 'POST'])
-
 def home_page():
     if request.method == 'POST':
         file = request.files['file']
-        # if file:
-        #     filename = file.filename
-        #     file.save(f'static/{filename}')
-        #     upload_to_s3(file=open(f'static/{filename}','rb'))
         name = request.form['name']
         email = request.form['email']
         city = request.form['city']
@@ -198,6 +297,18 @@ def details_page(ServiceID):
     
     return render_template('details.html', data=data, ServiceID=ServiceID)
 
+@application.route('/jobs/deny/<ServiceID>', methods = ['GET'])
+def deny_page(ServiceID):
+    try:
+        data = get_service_from_dynamodb(ServiceID)
+        add_service_visibility_to_dynamodb(ServiceID)
+        data_order_email = get_order_email_from_dynamodb(ServiceID)
+        send_deny_email_to_provider(data_order_email, data)
+    except:
+        print('Something went wrong')
+    
+    return render_template('deny.html', data=data, ServiceID=ServiceID)
+
 
 if __name__ == '__main__':
     default_port = "80"
@@ -222,88 +333,3 @@ if __name__ == '__main__':
         host=options.host,
         port=int(options.port)
     )
-
-# #####################
-
-# #button in html
-
-# <form>
-#   <input type="file" id="fileInput" />
-#   <button type="submit">Upload</button>
-# </form>
-
-
-# #javascript to handle the form submission and get the data
-
-# const form = document.querySelector('form');
-# form.addEventListener('submit', e => {
-#   e.preventDefault();
-#   const fileInput = document.querySelector('#fileInput');
-#   const file = fileInput.files[0];
-#   const formData = new FormData();
-#   formData.append('file', file);
-
-#   // Send the file to the server
-#   fetch('/upload', {
-#     method: 'POST',
-#     body: formData
-#   })
-#   .then(response => {
-#     // Do something with the response
-#   });
-# });
-
-# #on the server backend s3
-
-# import boto3
-
-# s3 = boto3.client('s3')
-
-# def upload_to_s3(file, bucket_name, acl="public-read"):
-
-#     try:
-#         s3.upload_fileobj(
-#             file,
-#             bucket_name,
-#             file.filename,
-#             ExtraArgs={
-#                 "ACL": acl,
-#                 "ContentType": file.content_type
-#             }
-#         )
-#     except Exception as e:
-#         print("Something Happened: ", e)
-#         return e
-
-#     return f"https://{bucket_name}.s3.amazonaws.com/{file.filename}"
-
-#     ####
-    
-# ###############    
-# In your HTML template, create a form with an input type of "file" and a button to submit the form:
-# Copy code
-# <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
-#   <input type="file" id="fileInput" name="file">
-#   <button type="submit">Upload</button>
-# </form>
-
-# In your Flask app, create a route to handle the form submission and file upload:
-# Copy code
-# from flask import Flask, request, redirect, url_for
-
-# app = Flask(__name__)
-
-# @app.route('/upload', methods=['POST'])
-# def upload():
-#     file = request.files['file']
-#     if file:
-#         filename = file.filename
-#         file.save(f'static/{filename}')
-#         return redirect(url_for('uploaded_file',
-#                                 filename=filename))
-#     return 'No File Selected'
-# This will handle the form submission and save the file to the static folder.
-
-# Once the file is saved you can then proceed to upload the file on your s3 bucket using the same code that i provided earlier
-# Copy code
-# upload_to_s3(file=open(f'static/{filename}','rb'),bucket_name='<YOUR-BUCKET-NAME>')
